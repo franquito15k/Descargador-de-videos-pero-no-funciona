@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descargar Video</title>
+</head>
+<body>
+    <h1>Descargar Video con URL</h1>
+    <form id="downloadForm">
+        <label for="url">Ingresa la URL del video:</label>
+        <input type="text" id="url" name="url" required>
+        <button type="submit">Descargar</button>
+    </form>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
