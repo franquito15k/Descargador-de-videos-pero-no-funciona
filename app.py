@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # Configura la ruta de descarga temporal
-DOWNLOAD_FOLDER = 'downloads'
+DOWNLOAD_FOLDER = '/downloads'
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
 
