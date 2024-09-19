@@ -4,9 +4,6 @@ exports.handler = async function (event, context) {
     try {
         const { url } = JSON.parse(event.body);
 
-        // Aquí puedes integrar yt-dlp o cualquier lógica para descargar el video.
-        // Por simplicidad, devuelvo una respuesta simulada.
-
         return {
             statusCode: 200,
             headers: {
