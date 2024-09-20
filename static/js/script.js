@@ -15,7 +15,14 @@ document.getElementById('downloadForm').addEventListener('submit', async functio
         if (response.ok) {
             // Obtiene el nombre del archivo del encabezado "Content-Disposition"
             const disposition = response.headers.get('Content-Disposition');
-            const filename = disposition.match(/filename="(.+)"/)[1];
+            const filenameMatch = disposition.match(/filename="(.+)"/);
+
+            // Si no se puede extraer el nombre del archivo
+            if (!filenameMatch) {
+                throw new Error('No se pudo obtener el nombre del archivo.');
+            }
+            
+            const filename = filenameMatch[1];
 
             // Convierte la respuesta en un Blob para descargar
             const blob = await response.blob();
@@ -28,6 +35,9 @@ document.getElementById('downloadForm').addEventListener('submit', async functio
             document.body.appendChild(a);
             a.click();
             a.remove();
+
+            // Libera el objeto URL creado
+            window.URL.revokeObjectURL(url);
         } else {
             const errorData = await response.json();
             alert(`Error: ${errorData.error}`);

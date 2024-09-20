@@ -1,24 +1,26 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 from yt_dlp import YoutubeDL
-import os
+from io import BytesIO
 
 app = Flask(__name__)
 
-# Configura la ruta de descarga temporal
-DOWNLOAD_FOLDER = '/downloads'
-if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER)
-
-# Función para descargar el video usando yt-dlp
+# Función para descargar el video usando yt-dlp y devolverlo como BytesIO
 def download_video(url):
     ydl_opts = {
-        'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
         'format': 'best',
+        'outtmpl': '-'
     }
     with YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info)
-        return filename
+        info = ydl.extract_info(url, download=False)
+        filename = f"{info['title']}.{info['ext']}"
+        ydl.download([url])
+
+        # Enviar el archivo en memoria
+        video_file = BytesIO()
+        with open(filename, 'rb') as f:
+            video_file.write(f.read())
+        video_file.seek(0)
+        return video_file, filename
 
 # Ruta principal que devuelve la página HTML
 @app.route('/')
@@ -35,8 +37,8 @@ def download():
         return jsonify({"error": "No se proporcionó una URL"}), 400
 
     try:
-        filename = download_video(url)
-        return send_file(filename, as_attachment=True)
+        video_file, filename = download_video(url)
+        return send_file(video_file, download_name=filename, as_attachment=True)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
